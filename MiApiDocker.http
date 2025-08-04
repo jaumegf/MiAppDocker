@@ -1,0 +1,6 @@
+@MiApiDocker_HostAddress = https://mi-api-docker.up.railway.app
+
+GET {{MiApiDocker_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
