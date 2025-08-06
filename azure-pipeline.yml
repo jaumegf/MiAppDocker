@@ -1,0 +1,43 @@
+trigger:
+- main  # Ejecutar cuando hay cambios en la rama main
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  buildConfiguration: 'Release'
+  outputDir: '$(Build.ArtifactStagingDirectory)/publish'
+
+steps:
+
+# Instala .NET SDK 9
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '9.0.x'
+    installationPath: $(Agent.ToolsDirectory)/dotnet
+
+# Restaurar paquetes NuGet
+- script: dotnet restore MiApiDocker.csproj
+  displayName: 'Restore packages'
+
+# Compila el proyecto
+- script: dotnet build MiApiDocker.csproj --configuration $(buildConfiguration) --no-restore
+  displayName: 'Build project'
+
+# (Opcional) Ejecutar tests (de momento desactivado)
+# - script: dotnet test MiApiDocker.csproj
+#   displayName: 'Run tests'
+
+# Publica la app para despliegue
+- script: dotnet publish MiApiDocker.csproj --configuration $(buildConfiguration) --output $(outputDir) --no-build
+  displayName: 'Publish project'
+
+# Despliega en Azure App Service
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: 'MyDevOpsConnection'
+    appType: 'webApp'
+    appName: 'MiApi'  # ⬅️ REEMPLAZA ESTO
+    package: '$(outputDir)'
+  displayName: 'Deploy to Azure App Service'
