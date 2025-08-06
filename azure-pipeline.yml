@@ -38,6 +38,6 @@ steps:
   inputs:
     azureSubscription: 'MyDevOpsConnection'
     appType: 'webApp'
-    appName: 'MiApi'  # ⬅️ REEMPLAZA ESTO
+    appName: 'MiApi' 
     package: '$(outputDir)'
   displayName: 'Deploy to Azure App Service'
